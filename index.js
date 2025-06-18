@@ -1,21 +1,22 @@
 const { spawn } = require('child_process');
 
-// Railway assegna automaticamente la porta tramite la variabile env PORT
 const port = process.env.PORT || 3000;
+
+console.log('🚀 Avvio MCP su porta', port);
 
 const inspector = spawn('npx', [
   '@modelcontextprotocol/inspector',
-  '.',                   // root folder contenente mcp.json
+  '.',
   '--host', '0.0.0.0',
   '--port', port.toString()
 ]);
 
 inspector.stdout.on('data', (data) => {
-  console.log(`MCP stdout: ${data}`);
+  console.log(`stdout: ${data}`);
 });
 
 inspector.stderr.on('data', (data) => {
-  console.error(`MCP stderr: ${data}`);
+  console.error(`stderr: ${data}`);
 });
 
 inspector.on('close', (code) => {
