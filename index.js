@@ -5,8 +5,7 @@ const port = process.env.PORT || 3000;
 console.log('🚀 Avvio MCP su porta', port);
 
 const inspector = spawn('npx', [
-  '@modelcontextprotocol/inspector',
-  '.',
+  '@modelcontextprotocol/toolbox',
   '--host', '0.0.0.0',
   '--port', port.toString()
 ]);
