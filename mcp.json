@@ -3,7 +3,7 @@
   "tools": [
     {
       "name": "echo",
-      "description": "Ripete il messaggio inviato",
+      "description": "Ripete il messaggio",
       "parameters": {
         "type": "object",
         "properties": {
