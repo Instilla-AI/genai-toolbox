@@ -1,16 +1,16 @@
 #!/usr/bin/env bash
 set -e
 
-# Crea ambiente virtuale
+# Crea virtualenv
 python3 -m venv .venv
 source .venv/bin/activate
 
-# Cancella eventuale cartella toolbox esistente
+# Elimina vecchia cartella
 rm -rf toolbox
 
-# Clona repo
+# Clona repo genai-toolbox
 git clone https://github.com/googleapis/genai-toolbox.git toolbox
 cd toolbox
 
-# Avvia MCP server
-python3 -m genai_toolbox.cli --host 0.0.0.0 --port $PORT
+# Avvia MCP server testuale (es. text_tools.py)
+python3 tools/text_tools.py --host 0.0.0.0 --port $PORT
