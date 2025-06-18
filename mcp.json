@@ -1,0 +1,17 @@
+{
+  "type": "toolbox",
+  "tools": [
+    {
+      "name": "echo",
+      "description": "Ripete il messaggio inviato",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "message": { "type": "string" }
+        },
+        "required": ["message"]
+      },
+      "run": "echo"
+    }
+  ]
+}
