@@ -5,7 +5,10 @@ set -e
 python3 -m venv .venv
 source .venv/bin/activate
 
-# Clona toolbox (localmente)
+# Cancella eventuale cartella toolbox esistente
+rm -rf toolbox
+
+# Clona repo
 git clone https://github.com/googleapis/genai-toolbox.git toolbox
 cd toolbox
 
