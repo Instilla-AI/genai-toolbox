@@ -3,7 +3,9 @@ FROM python:3.11-slim
 WORKDIR /app
 COPY . /app
 
-RUN pip install --no-cache-dir
+# Rimuovi completamente il comando pip install (non necessario)
+# oppure tieni solo per sicurezza pip upgrade
+RUN pip install --upgrade pip
 
 EXPOSE 3000
 
