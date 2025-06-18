@@ -1,3 +1,4 @@
+console.log('🚀 Avvio MCP...');
 const { spawn } = require('child_process');
 
 const port = process.env.PORT || 3000;
