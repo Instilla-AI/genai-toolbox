@@ -6,6 +6,6 @@
     "start": "node index.js"
   },
   "dependencies": {
-    "@modelcontextprotocol/inspector": "^0.1.0"
+    "@modelcontextprotocol/toolbox": "^0.1.3"
   }
 }
