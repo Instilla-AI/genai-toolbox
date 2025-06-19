@@ -20,14 +20,16 @@ tools:
         description: L'ID della tabella BigQuery (es. 'my_table').
 
   # Tool per eseguire una query SQL arbitraria (con cautela!)
-  execute_raw_sql: # Usa questo con MOLTA CAUTELA per SQL Injection!
-    kind: bigquery-sql
-    source: my-bigquery-source
-    description: Esegue una query SQL grezza su BigQuery. Usare con cautela e solo per query SELECT.
-    parameters:
-      - name: sql_query
-        type: string
-        description: La query SQL completa da eseguire.
+execute_raw_sql:
+        kind: bigquery-sql
+        source: my-bigquery-source
+        description: Esegue una query SQL grezza su BigQuery. Usare con cautela e solo per query SELECT.
+        parameters:
+          - name: sql_query
+            type: string
+            description: La query SQL completa da eseguire.
+        statement: |
+          ${sql_query} # Questo è il placeholder che il toolbox sostituirà con il valore del parametro
 
   # Tool più sicuro per la generazione di query basata su contesto
   # Questa è la chiave per la flessibilità con l'LLM!
