@@ -1,0 +1,52 @@
+# sources definisce le tue connessioni ai database
+sources:
+  my-bigquery-source:
+    kind: bigquery
+    project: ${GCP_PROJECT_ID} # O il tuo ID progetto fisso
+
+# tools definisce le azioni che l'LLM può eseguire
+tools:
+  # Tool per ottenere lo schema di una tabella specifica
+  get_table_schema:
+    kind: bigquery-get-table-info # Questo tool del toolbox è perfetto per questo!
+    source: my-bigquery-source
+    description: Restituisce lo schema dettagliato di una tabella BigQuery dato il dataset e il nome della tabella.
+    parameters:
+      - name: dataset_id
+        type: string
+        description: L'ID del dataset BigQuery (es. 'my_dataset').
+      - name: table_id
+        type: string
+        description: L'ID della tabella BigQuery (es. 'my_table').
+
+  # Tool per eseguire una query SQL arbitraria (con cautela!)
+  execute_raw_sql: # Usa questo con MOLTA CAUTELA per SQL Injection!
+    kind: bigquery-sql
+    source: my-bigquery-source
+    description: Esegue una query SQL grezza su BigQuery. Usare con cautela e solo per query SELECT.
+    parameters:
+      - name: sql_query
+        type: string
+        description: La query SQL completa da eseguire.
+
+  # Tool più sicuro per la generazione di query basata su contesto
+  # Questa è la chiave per la flessibilità con l'LLM!
+  generate_and_execute_query:
+    kind: bigquery-query-generation # Questo è un tipo di tool ipotetico/concettuale
+                                    # Potrebbe essere gestito internamente dal toolbox
+                                    # o richiedere un LLM che usi i tool di schema discovery
+                                    # per poi generare la query.
+    source: my-bigquery-source
+    description: Genera ed esegue una query SQL BigQuery basandosi su una richiesta in linguaggio naturale e lo schema del database.
+    parameters:
+      - name: natural_language_request
+        type: string
+        description: La richiesta dell'utente in linguaggio naturale.
+      - name: dataset_id # Opzionale, per restringere la ricerca
+        type: string
+        description: Il dataset BigQuery su cui operare.
+      - name: table_id # Opzionale, per suggerire una tabella specifica
+        type: string
+        description: La tabella BigQuery su cui l'utente vuole fare la query.
+      # Qui il toolbox userà i suoi strumenti interni (come get-table-info)
+      # e un LLM per costruire la query in modo dinamico.
