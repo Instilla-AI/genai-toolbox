@@ -1,16 +1,15 @@
-# Utilizza l'immagine Docker ufficiale come base
 FROM us-central1-docker.pkg.dev/database-toolbox/toolbox/toolbox:0.7.0
 
-# Copia il tools.yaml dalla radice della tua repo GitHub all'interno del container
-# Si presume che /app sia la working directory o un percorso accessibile per il toolbox
-COPY tools.yaml /app/tools.yaml
+WORKDIR /usr/src/app
+COPY tools.yaml .
 
-# Se il toolbox ha un ENTRYPOINT/CMD che cerca un file specifico,
-# dobbiamo assicurarci che lo trovi.
-# L'immagine base del toolbox di solito esegue il binary `toolbox`.
-# Dobbiamo passare l'argomento `--tools-file` al binary.
-# Questo può essere fatto tramite la variabile d'ambiente `TOOLBOX_ARGS`.
+# Crea un piccolo script di ingresso per gestire le credenziali
+COPY entrypoint.sh .
+RUN chmod +x entrypoint.sh
 
-# Non serve un CMD qui se l'immagine base ha già un ENTRYPOINT che esegue il toolbox
-# Tuttavia, per essere espliciti e passare argomenti, potresti sovrascriverlo se necessario.
-# Ma è meglio usare la variabile d'ambiente per gli argomenti di configurazione.
+# Assicurati che questo sia l'ENTRYPOINT del tuo container
+ENTRYPOINT ["./entrypoint.sh"]
+
+# NON definire CMD se l'ENTRYPOINT chiama il toolbox direttamente.
+# Altrimenti, se vuoi un CMD, fai in modo che chiami l'ENTRYPOINT
+# e poi il toolbox. Per semplicità, ENTRYPOINT è meglio.
