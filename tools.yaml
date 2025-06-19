@@ -27,17 +27,17 @@ tools:
       ${sql_query}
 
   # Tool più sicuro per la generazione di query basata su contesto
-  generate_and_execute_query: # <--- CORRETTO: Indentato allo stesso livello
-    kind: bigquery-query-generation
-    source: my-bigquery-source
-    description: Genera ed esegue una query SQL BigQuery basandosi su una richiesta in linguaggio naturale e lo schema del database.
-    parameters:
-      - name: natural_language_request
-        type: string
-        description: La richiesta dell'utente in linguaggio naturale.
-      - name: dataset_id # Opzionale, per restringere la ricerca
-        type: string
-        description: Il dataset BigQuery su cui operare.
-      - name: table_id # Opzionale, per suggerire una tabella specifica
-        type: string
-        description: La tabella BigQuery su cui l'utente vuole fare la query.
+  # generate_and_execute_query:
+  #   kind: bigquery-query-generation # Questo kind non è riconosciuto
+  #   source: my-bigquery-source
+  #   description: Genera ed esegue una query SQL BigQuery basandosi su una richiesta in linguaggio naturale e lo schema del database.
+  #   parameters:
+  #     - name: natural_language_request
+  #       type: string
+  #       description: La richiesta dell'utente in linguaggio naturale.
+  #     - name: dataset_id
+  #       type: string
+  #       description: Il dataset BigQuery su cui operare.
+  #     - name: table_id
+  #       type: string
+  #       description: La tabella BigQuery su cui l'utente vuole fare la query.
