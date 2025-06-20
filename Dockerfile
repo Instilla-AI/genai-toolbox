@@ -1,28 +1,24 @@
-# Dockerfile
-FROM golang:1.21-alpine AS builder
-
-WORKDIR /app
-
-# Installa git e clona il repository
-RUN apk add --no-cache git
-RUN git clone https://github.com/googleapis/genai-toolbox.git .
-
-# Scarica le dipendenze e compila
-RUN go mod download
-RUN CGO_ENABLED=0 GOOS=linux go build -o toolbox .
-
-# Stage di produzione
 FROM alpine:latest
 
-RUN apk --no-cache add ca-certificates
-WORKDIR /root/
+# Installa le dipendenze necessarie
+RUN apk add --no-cache wget ca-certificates curl
 
-# Copia l'eseguibile e il file di configurazione
-COPY --from=builder /app/toolbox .
+# Crea directory di lavoro
+WORKDIR /app
+
+# Scarica il binario pre-compilato dalla release ufficiale
+RUN wget -O toolbox https://storage.googleapis.com/genai-toolbox/v0.7.0/linux/amd64/toolbox && \
+    chmod +x toolbox
+
+# Copia il file di configurazione
 COPY tools.yaml .
 
 # Esponi la porta
 EXPOSE 5000
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD curl -f http://localhost:5000/health || exit 1
 
 # Comando di avvio
 CMD ["./toolbox", "--tools-file", "tools.yaml", "--host", "0.0.0.0", "--port", "5000"]
