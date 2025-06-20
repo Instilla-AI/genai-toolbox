@@ -1,43 +1,41 @@
-# sources definisce le tue connessioni ai database
 sources:
-  my-bigquery-source:
-    kind: bigquery
-    project: ${GCP_PROJECT_ID} # O il tuo ID progetto fisso
-
-# tools definisce le azioni che l'LLM può eseguire
+  my-postgres-db:
+    kind: postgres
+    host: ${DATABASE_HOST}
+    port: ${DATABASE_PORT}
+    database: ${DATABASE_NAME}
+    user: ${DATABASE_USER}
+    password: ${DATABASE_PASSWORD}
 
 tools:
-  # Tool per ottenere lo schema di una tabella specifica
-  get_table_schema:
-    kind: bigquery-get-table-info # Questo tool del toolbox è perfetto per questo!
-    source: my-bigquery-source
-    description: Restituisce lo schema dettagliato di una tabella BigQuery. # Modificato la descrizione
-
-
-  # Tool per eseguire una query SQL arbitraria (con cautela!)
-  execute_raw_sql:  
-    kind: bigquery-sql
-    source: my-bigquery-source
-    description: Esegue una query SQL grezza su BigQuery. Usare con cautela e solo per query SELECT.
+  search-data:
+    kind: postgres-sql
+    source: my-postgres-db
+    description: Cerca dati nel database usando linguaggio naturale
     parameters:
-      - name: sql_query
+      - name: query
         type: string
-        description: La query SQL completa da eseguire.
-    statement: |
-      ${sql_query}
+        description: La query di ricerca
+    statement: SELECT * FROM your_table WHERE description ILIKE '%' || $1 || '%';
 
-  # Tool più sicuro per la generazione di query basata su contesto
-  # generate_and_execute_query:
-  #   kind: bigquery-query-generation # Questo kind non è riconosciuto
-  #   source: my-bigquery-source
-  #   description: Genera ed esegue una query SQL BigQuery basandosi su una richiesta in linguaggio naturale e lo schema del database.
-  #   parameters:
-  #     - name: natural_language_request
-  #       type: string
-  #       description: La richiesta dell'utente in linguaggio naturale.
-  #     - name: dataset_id
-  #       type: string
-  #       description: Il dataset BigQuery su cui operare.
-  #     - name: table_id
-  #       type: string
-  #       description: La tabella BigQuery su cui l'utente vuole fare la query.
+  get-analytics:
+    kind: postgres-sql
+    source: my-postgres-db
+    description: Ottieni analytics dai dati
+    parameters:
+      - name: period
+        type: string
+        description: Periodo per l'analisi (day, week, month)
+    statement: |
+      SELECT 
+        DATE_TRUNC($1, created_at) as period,
+        COUNT(*) as total_records,
+        AVG(value) as avg_value
+      FROM your_analytics_table 
+      GROUP BY DATE_TRUNC($1, created_at)
+      ORDER BY period DESC;
+
+toolsets:
+  main_toolset:
+    - search-data
+    - get-analytics
