@@ -1,21 +1,10 @@
-FROM alpine:latest
+FROM us-central1-docker.pkg.dev/database-toolbox/toolbox/toolbox:0.7.0
 
-# Installa dipendenze
-RUN apk add --no-cache curl ca-certificates
-
-# Scarica il binario precompilato
-RUN curl -O https://storage.googleapis.com/genai-toolbox/v0.7.0/linux/amd64/toolbox && \
-    chmod +x toolbox && \
-    mv toolbox /usr/local/bin/
-
-# Directory di lavoro
 WORKDIR /app
 
-# Copia configurazione
 COPY tools.yaml .
 
-# Esponi porta
 EXPOSE 5000
 
-# Avvia
-CMD ["toolbox", "--tools-file", "tools.yaml"]
+# Forza il bind su 0.0.0.0 invece di localhost
+CMD ["./toolbox", "--tools-file", "tools.yaml", "--port", "5000", "--host", "0.0.0.0"]
