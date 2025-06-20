@@ -6,5 +6,16 @@ COPY tools.yaml .
 
 EXPOSE 5000
 
-# Forza il bind su 0.0.0.0 invece di localhost
-CMD ["./toolbox", "--tools-file", "tools.yaml", "--port", "5000", "--host", "0.0.0.0"]
+# Script con logging esteso
+RUN echo '#!/bin/sh' > start.sh && \
+    echo 'echo "=== Starting GenAI Toolbox ==="' >> start.sh && \
+    echo 'echo "Date: $(date)"' >> start.sh && \
+    echo 'echo "Environment variables:"' >> start.sh && \
+    echo 'env | grep PG' >> start.sh && \
+    echo 'echo "Tools file content:"' >> start.sh && \
+    echo 'cat tools.yaml' >> start.sh && \
+    echo 'echo "=== Starting toolbox process ==="' >> start.sh && \
+    echo './toolbox --tools-file tools.yaml --port 5000' >> start.sh && \
+    chmod +x start.sh
+
+CMD ["./start.sh"]
