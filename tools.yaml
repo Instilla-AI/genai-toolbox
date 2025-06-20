@@ -1,21 +1,15 @@
 sources:
   my-pg-source:
     kind: postgres
-    host: postgres.railway.internal
-    port: 5432
-    database: railway
-    user: postgres
+    host: ${PGHOST}
+    port: ${PGPORT}
+    database: ${PGDATABASE}
+    user: ${PGUSER}
     password: ${PGPASSWORD}
 
 tools:
-  simple-query:
+  test-connection:
     kind: postgres-sql
     source: my-pg-source
-    description: Simple test query
-    statement: SELECT 1 as test;
-    
-  list-tables:
-    kind: postgres-sql
-    source: my-pg-source
-    description: List all tables in the database
-    statement: SELECT table_name FROM information_schema.tables WHERE table_schema = 'public';
+    description: Test database connection
+    statement: SELECT current_database(), current_user, now();
