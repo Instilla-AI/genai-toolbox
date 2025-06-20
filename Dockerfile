@@ -6,5 +6,5 @@ COPY tools.yaml .
 
 EXPOSE 5000
 
-# Debug semplice
-CMD ["sh", "-c", "echo 'Starting toolbox...' && echo 'Tools file:' && cat tools.yaml && echo 'Starting process...' && ./toolbox --tools-file tools.yaml --port 5000"]
+# IMPORTANTE: --address 0.0.0.0 è fondamentale per Railway
+CMD ["./toolbox", "--tools-file", "tools.yaml", "--address", "0.0.0.0", "--port", "5000"]
