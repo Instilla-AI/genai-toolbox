@@ -1,16 +1,21 @@
 sources:
   my-pg-source:
     kind: postgres
-    # Usa la URL completa del database
-    url: ${DATABASE_URL}
+    host: postgres.railway.internal
+    port: 5432
+    database: railway
+    user: postgres
+    password: ${PGPASSWORD}
 
 tools:
-  search-data:
+  simple-query:
     kind: postgres-sql
     source: my-pg-source
-    description: Search for data
-    parameters:
-      - name: query
-        type: string
-        description: Search query
-    statement: SELECT * FROM information_schema.tables LIMIT 10;
+    description: Simple test query
+    statement: SELECT 1 as test;
+    
+  list-tables:
+    kind: postgres-sql
+    source: my-pg-source
+    description: List all tables in the database
+    statement: SELECT table_name FROM information_schema.tables WHERE table_schema = 'public';
