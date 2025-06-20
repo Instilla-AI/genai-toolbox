@@ -1,4 +1,6 @@
+# tools.yaml
 sources:
+  # Esempio con PostgreSQL
   my-postgres-db:
     kind: postgres
     host: ${DATABASE_HOST}
@@ -6,36 +8,98 @@ sources:
     database: ${DATABASE_NAME}
     user: ${DATABASE_USER}
     password: ${DATABASE_PASSWORD}
+    
+  # Esempio con MySQL (opzionale)
+  my-mysql-db:
+    kind: mysql
+    host: ${MYSQL_HOST}
+    port: ${MYSQL_PORT}
+    database: ${MYSQL_DATABASE}
+    user: ${MYSQL_USER}
+    password: ${MYSQL_PASSWORD}
 
 tools:
-  search-data:
+  # Tool per cercare dati
+  search-records:
     kind: postgres-sql
     source: my-postgres-db
-    description: Cerca dati nel database usando linguaggio naturale
+    description: Cerca record nel database usando una query di testo
     parameters:
-      - name: query
+      - name: search_term
         type: string
-        description: La query di ricerca
-    statement: SELECT * FROM your_table WHERE description ILIKE '%' || $1 || '%';
+        description: Il termine da cercare
+    statement: |
+      SELECT id, name, description, created_at 
+      FROM your_table_name 
+      WHERE name ILIKE '%' || $1 || '%' 
+         OR description ILIKE '%' || $1 || '%'
+      LIMIT 20;
 
-  get-analytics:
+  # Tool per statistiche
+  get-stats:
     kind: postgres-sql
     source: my-postgres-db
-    description: Ottieni analytics dai dati
+    description: Ottieni statistiche generali dal database
+    statement: |
+      SELECT 
+        COUNT(*) as total_records,
+        COUNT(DISTINCT category) as total_categories,
+        MAX(created_at) as last_update
+      FROM your_table_name;
+
+  # Tool per dati per periodo
+  get-data-by-period:
+    kind: postgres-sql
+    source: my-postgres-db
+    description: Ottieni dati aggregati per periodo
     parameters:
       - name: period
         type: string
-        description: Periodo per l'analisi (day, week, month)
+        description: Periodo di aggregazione (day, week, month)
+      - name: days_back
+        type: integer
+        description: Numero di giorni indietro da considerare
     statement: |
       SELECT 
         DATE_TRUNC($1, created_at) as period,
-        COUNT(*) as total_records,
-        AVG(value) as avg_value
-      FROM your_analytics_table 
+        COUNT(*) as record_count,
+        AVG(CASE WHEN value IS NOT NULL THEN value END) as avg_value
+      FROM your_table_name 
+      WHERE created_at >= NOW() - INTERVAL $2 || ' days'
       GROUP BY DATE_TRUNC($1, created_at)
       ORDER BY period DESC;
 
+  # Tool per inserire dati (esempio)
+  insert-record:
+    kind: postgres-sql
+    source: my-postgres-db
+    description: Inserisce un nuovo record nel database
+    parameters:
+      - name: name
+        type: string
+        description: Nome del record
+      - name: description
+        type: string
+        description: Descrizione del record
+    statement: |
+      INSERT INTO your_table_name (name, description, created_at)
+      VALUES ($1, $2, NOW())
+      RETURNING id, name, description, created_at;
+
 toolsets:
-  main_toolset:
-    - search-data
-    - get-analytics
+  # Gruppo di tool per query base
+  basic_queries:
+    - search-records
+    - get-stats
+    
+  # Gruppo di tool per analytics
+  analytics:
+    - get-data-by-period
+    - get-stats
+    
+  # Tutti i tool
+  all_tools:
+    - search-records
+    - get-stats
+    - get-data-by-period
+    - insert-record
