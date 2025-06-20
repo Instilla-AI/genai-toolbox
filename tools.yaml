@@ -1,19 +1,16 @@
 sources:
   my-pg-source:
     kind: postgres
-    host: ${DATABASE_HOST}
-    port: ${DATABASE_PORT}
-    database: ${DATABASE_NAME}
-    user: ${DATABASE_USER}
-    password: ${DATABASE_PASSWORD}
+    # Usa la URL completa del database
+    url: ${DATABASE_URL}
 
 tools:
   search-data:
     kind: postgres-sql
     source: my-pg-source
-    description: Search data in database
+    description: Search for data
     parameters:
       - name: query
         type: string
         description: Search query
-    statement: SELECT * FROM your_table WHERE column ILIKE '%' || $1 || '%';
+    statement: SELECT * FROM information_schema.tables LIMIT 10;
