@@ -6,16 +6,5 @@ COPY tools.yaml .
 
 EXPOSE 5000
 
-# Script con logging esteso
-RUN echo '#!/bin/sh' > start.sh && \
-    echo 'echo "=== Starting GenAI Toolbox ==="' >> start.sh && \
-    echo 'echo "Date: $(date)"' >> start.sh && \
-    echo 'echo "Environment variables:"' >> start.sh && \
-    echo 'env | grep PG' >> start.sh && \
-    echo 'echo "Tools file content:"' >> start.sh && \
-    echo 'cat tools.yaml' >> start.sh && \
-    echo 'echo "=== Starting toolbox process ==="' >> start.sh && \
-    echo './toolbox --tools-file tools.yaml --port 5000' >> start.sh && \
-    chmod +x start.sh
-
-CMD ["./start.sh"]
+# Debug semplice
+CMD ["sh", "-c", "echo 'Starting toolbox...' && echo 'Tools file:' && cat tools.yaml && echo 'Starting process...' && ./toolbox --tools-file tools.yaml --port 5000"]
