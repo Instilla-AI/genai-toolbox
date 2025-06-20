@@ -24,25 +24,20 @@ RUN echo "Configuration file:" && \
 
 EXPOSE 5000
 
-# Script di startup corretto
-RUN cat > start.sh << 'EOF'
-#!/bin/bash
-echo "Starting toolbox server..."
-echo "Current directory: $(pwd)"
-echo "Files in current directory:"
-ls -la
-
-echo "Environment variables:"
-env | grep -E "(DATABASE|PORT)" || echo "No database env vars found"
-
-echo "Checking toolbox permissions:"
-ls -la toolbox
-
-echo "Starting server..."
-exec ./toolbox --tools-file tools.yaml --host 0.0.0.0 --port ${PORT:-5000}
-EOF
-
-# IMPORTANTE: Imposta i permessi per lo script
-RUN chmod +x start.sh
+# Script di startup corretto (TUTTO IN UNA LINEA)
+RUN cat > start.sh << 'EOF' && \
+#!/bin/bash \
+echo "Starting toolbox server..." \
+echo "Current directory: $(pwd)" \
+echo "Files in current directory:" \
+ls -la \
+echo "Environment variables:" \
+env | grep -E "(DATABASE|PORT)" || echo "No database env vars found" \
+echo "Checking toolbox permissions:" \
+ls -la toolbox \
+echo "Starting server..." \
+exec ./toolbox --tools-file tools.yaml --host 0.0.0.0 --port ${PORT:-5000} \
+EOF \
+chmod +x start.sh
 
 CMD ["./start.sh"]
