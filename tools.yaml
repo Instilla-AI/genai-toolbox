@@ -1,5 +1,5 @@
 sources:
-  my-pg-source:
+  railway-postgres:
     kind: postgres
     host: ${PGHOST}
     port: ${PGPORT}
@@ -10,6 +10,17 @@ sources:
 tools:
   test-connection:
     kind: postgres-sql
-    source: my-pg-source
+    source: railway-postgres
     description: Test database connection
-    statement: SELECT current_database(), current_user, now();
+    statement: SELECT current_database(), current_user, now() as current_time;
+    
+  list-tables:
+    kind: postgres-sql
+    source: railway-postgres
+    description: List all tables in the database
+    statement: SELECT table_name FROM information_schema.tables WHERE table_schema = 'public';
+
+toolsets:
+  default:
+    - test-connection
+    - list-tables
