@@ -1,20 +1,19 @@
-# tools.yaml - versione minima per test
 sources:
-  test-source:
+  my-pg-source:
     kind: postgres
-    host: ${DATABASE_HOST:-localhost}
-    port: ${DATABASE_PORT:-5432}
-    database: ${DATABASE_NAME:-test}
-    user: ${DATABASE_USER:-user}
-    password: ${DATABASE_PASSWORD:-password}
+    host: ${DATABASE_HOST}
+    port: ${DATABASE_PORT}
+    database: ${DATABASE_NAME}
+    user: ${DATABASE_USER}
+    password: ${DATABASE_PASSWORD}
 
 tools:
-  ping:
+  search-data:
     kind: postgres-sql
-    source: test-source
-    description: Test di connessione database
-    statement: SELECT 1 as result;
-
-toolsets:
-  basic:
-    - ping
+    source: my-pg-source
+    description: Search data in database
+    parameters:
+      - name: query
+        type: string
+        description: Search query
+    statement: SELECT * FROM your_table WHERE column ILIKE '%' || $1 || '%';
